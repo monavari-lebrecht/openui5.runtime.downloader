@@ -16,7 +16,8 @@ const compareVersions = require('compare-versions');
 
 const openUI5DownloadHost = packageJson.openui5.downloadHost;
 const oUI5VersionUrl = url.parse(`https://${openUI5DownloadHost}/neo-app.json`);
-let oUrl = url.parse(`http://${openUI5DownloadHost}/downloads/openui5-runtime-${packageJson.openui5.version}.zip`);
+packageJson.openui5.package = packageJson.openui5.package ? packageJson.openui5.package : "runtime";
+let oUrl = url.parse(`http://${openUI5DownloadHost}/downloads/openui5-${packageJson.openui5.package}-${packageJson.openui5.version}.zip`);
 
 const downloadDir = path.resolve(`${__dirname}${path.dirname(oUrl.pathname)}`);
 const outDir = path.resolve(`${__dirname}/lib`);
@@ -36,7 +37,7 @@ Promise.all([rpn.get(oUI5VersionUrl.href), fse.remove(outDir), fse.remove(downlo
     .then(data => {
         packageJson.openui5.version =
             packageJson.openui5.version === 'latest' ? calcLatest(JSON.parse(data[0])) : packageJson.openui5.version;
-        oUrl = url.parse(`http://${openUI5DownloadHost}/downloads/openui5-runtime-${packageJson.openui5.version}.zip`);
+        oUrl = url.parse(`http://${openUI5DownloadHost}/downloads/openui5-${packageJson.openui5.package}-${packageJson.openui5.version}.zip`);
         const p1 = mkdirp(downloadDir);
         const p2 = mkdirp(outDir);
         return Promise.all([p1, p2]);
